@@ -1,15 +1,7 @@
-import { IsString, IsNotEmpty, IsEmail } from 'class-validator';
-import { Fields, Strings } from 'src/data/strings';
+import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { Fields, Strings } from "src/data/strings";
 
-export class CreateUserDto {
-  @IsNotEmpty({
-    message: Strings.fieldCantBeEmpty(Fields.Username),
-  })
-  @IsString({
-    message: Strings.fieldMustBeString(Fields.Username),
-  })
-  username: string;
-
+export class LoginDto {
   @IsNotEmpty({
     message: Strings.fieldCantBeEmpty(Fields.Email),
   })

@@ -4,8 +4,9 @@ import {
   ProductBasket,
   ProductBasketDocument,
 } from "./models/product-basket.model.js";
-import { Model } from "mongoose";
+import { Document, Model } from "mongoose";
 import { ProductService } from "../product/product.service.js";
+import { AuthorizationService } from "src/interfaces/auth.interface.js";
 
 @Injectable()
 export class ProductBasketService {
@@ -16,9 +17,15 @@ export class ProductBasketService {
   ) {}
 
   async addProduct(basketId: string, productId: string) {
-    const basket = await this.basketModel.findById(basketId);
+    const basket = await this.basketModel.findById(basketId).populate({
+      path: "products",
+      populate: {
+        path: "productId",
+        model: "Product",
+      },
+    });
     const productIndex = basket.products.findIndex(
-      (p) => p.productId.toString() === productId.toString(),
+      (p) => p.productId.id.toString() === productId.toString(),
     );
     if (productIndex > -1) {
       basket.products[productIndex].count += 1;
@@ -35,5 +42,16 @@ export class ProductBasketService {
     }
     basket.markModified("products");
     await basket.save();
+    return basket;
+  }
+
+  async createBasket(user_id: string): Promise<ProductBasket> {
+    const basket = await this.basketModel.create({
+      user_id: user_id,
+    });
+    if (!basket) {
+      throw new HttpException("Something went wrong", HttpStatus.BAD_GATEWAY);
+    }
+    return basket.save();
   }
 }

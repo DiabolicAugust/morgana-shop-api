@@ -1,35 +1,35 @@
 import {
   Injectable,
-  PipeTransform,
-  ArgumentMetadata,
-  BadRequestException,
   HttpException,
   ExceptionFilter,
   ArgumentsHost,
   HttpStatus,
-} from '@nestjs/common';
-import { error } from 'console';
-import { Request, Response } from 'express';
+} from "@nestjs/common";
+import { Request, Response } from "express";
 
 @Injectable()
 export class ErrorsCatchingFilter implements ExceptionFilter {
-  catch(exception: HttpException, host: ArgumentsHost) {
+  catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
-    const status =
-      exception instanceof HttpException
-        ? exception.getStatus()
-        : HttpStatus.BAD_REQUEST;
-    const errorResponse = exception.getResponse();
-    const message = (errorResponse as any)?.message || errorResponse;
+    let status: number;
+    let errorResponse: any;
+
+    if (exception instanceof HttpException) {
+      status = exception.getStatus();
+      errorResponse = exception.getResponse();
+    } else {
+      status = HttpStatus.BAD_REQUEST;
+      errorResponse = {
+        statusCode: status,
+        timestamp: new Date().toISOString(),
+        path: request.url,
+        message: exception.message || exception,
+      };
+    }
 
     console.log(errorResponse);
-    response.status(status).json({
-      statusCode: status,
-      timestamp: new Date().toISOString(),
-      path: request.url,
-      message: message,
-    });
+    response.status(status).json(errorResponse);
   }
 }

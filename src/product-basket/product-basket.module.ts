@@ -8,10 +8,11 @@ import {
 } from "./models/product-basket.model.js";
 import { ProductService } from "../product/product.service.js";
 import { Product, ProductSchema } from "../product/models/product.model.js";
+import { JwtService } from "../services/jwt-service";
 
 @Module({
   controllers: [ProductBasketController],
-  providers: [ProductBasketService, ProductService],
+  providers: [ProductBasketService, ProductService, JwtService],
   imports: [
     MongooseModule.forFeature([
       {

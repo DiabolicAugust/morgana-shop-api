@@ -24,4 +24,7 @@ export class ProductService {
       );
     return product;
   }
+  async getProducts() {
+    return this.productModel.find();
+  }
 }

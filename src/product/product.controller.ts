@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   UseFilters,
   UsePipes,
@@ -26,5 +27,11 @@ export class ProductController {
   @UseFilters(new ErrorsCatchingFilter())
   async getProducts() {
     return this.productService.getProducts();
+  }
+
+  @Get("/:id")
+  @UseFilters(new ErrorsCatchingFilter())
+  async getProduct(@Param("id") id: string) {
+    return this.productService.getProduct(id);
   }
 }

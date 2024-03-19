@@ -32,5 +32,8 @@ export const ProductBasketSchema = SchemaFactory.createForClass(ProductBasket);
 
 export const ProductBasketPopulateOptionsProducts = {
   path: "products",
-  populate: { path: "_id", select: "name" },
+  populate: {
+    path: "productId",
+    model: "Product",
+  },
 };

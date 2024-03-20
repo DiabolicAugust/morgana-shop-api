@@ -4,10 +4,10 @@ import { AppService } from "./app.service";
 import { ConfigModule } from "@nestjs/config";
 import { MongooseModule } from "@nestjs/mongoose";
 import { ProductModule } from "./product/product.module";
-import { UserService } from "./user/user.service";
 import { UserModule } from "./user/user.module";
 import { AuthModule } from "./auth/auth.module";
 import { JwtModule } from "@nestjs/jwt";
+import { ProductBasketModule } from "./product-basket/product-basket.module";
 
 @Module({
   imports: [
@@ -28,6 +28,8 @@ import { JwtModule } from "@nestjs/jwt";
     UserModule,
 
     AuthModule,
+
+    ProductBasketModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument } from "mongoose";
+import { HydratedDocument, Types } from "mongoose";
+import { ProductBasket } from "../../product-basket/models/product-basket.model.js";
 
 export const enum Roles {
   Admin = "Admin",
@@ -18,6 +19,8 @@ export class User {
   password: string;
   @Prop({ default: Roles.User })
   role: string;
+  @Prop({ type: Types.ObjectId, ref: ProductBasket.name })
+  basket_id: ProductBasket;
 
   createdAt: string;
   updatedAt: string;

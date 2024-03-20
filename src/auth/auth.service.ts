@@ -7,17 +7,21 @@ import { Model } from "mongoose";
 import { HashService } from "src/services/hash-service";
 import { UserPayload } from "src/user/dto/user-payload";
 import { RegistrationDto } from "./dto/registration.dto";
+import { ProductBasketService } from "src/product-basket/product-basket.service";
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+    private readonly basketService: ProductBasketService,
     private readonly hashService: HashService,
   ) {}
 
   async login(dto: LoginDto) {
-    const userCheck = await this.userModel.findOne({ email: dto.email });
+    const userCheck = await this.userModel
+      .findOne({ email: dto.email })
+      .populate("basket_id");
 
     if (!userCheck)
       throw new HttpException(
@@ -43,6 +47,13 @@ export class AuthService {
 
     const token = this.jwtService.signToken(payload);
 
+    if (!userCheck.basket_id) {
+      const basket = await this.basketService.createBasket(userCheck.id);
+
+      userCheck.basket_id = basket;
+      await userCheck.save();
+    }
+
     return {
       user: userCheck.getWithoutPassword(),
       token: token,
@@ -58,8 +69,12 @@ export class AuthService {
       );
     }
     dto.password = await this.hashService.encryptPassword(dto.password);
-
     const createdUser = await this.userModel.create(dto);
+    const basket = await this.basketService.createBasket(createdUser.id);
+
+    createdUser.basket_id = basket;
+    await createdUser.save();
+
     return createdUser.getWithoutPassword();
   }
 }

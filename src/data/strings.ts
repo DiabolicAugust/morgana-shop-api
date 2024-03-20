@@ -12,6 +12,7 @@ export enum Fields {
 
 //Key must be a name of a model, or Error handler can may break !!!
 export enum Models {
+  User = "User",
   ProductBasket = "Product Basket",
   Product = "Product",
 }

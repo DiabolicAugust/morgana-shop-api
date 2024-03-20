@@ -8,6 +8,8 @@ import { HashService } from "src/services/hash-service";
 import { UserPayload } from "src/user/dto/user-payload";
 import { RegistrationDto } from "./dto/registration.dto";
 import { ProductBasketService } from "src/product-basket/product-basket.service";
+import { WishlistService } from "src/wishlist/wishlist.service";
+import { DefaultWishlist } from "src/wishlist/dto/create-wishlist.dto";
 
 @Injectable()
 export class AuthService {
@@ -15,13 +17,17 @@ export class AuthService {
     private readonly jwtService: JwtService,
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
     private readonly basketService: ProductBasketService,
+    private readonly wishlistService: WishlistService,
     private readonly hashService: HashService,
   ) {}
 
   async login(dto: LoginDto) {
     const userCheck = await this.userModel
       .findOne({ email: dto.email })
-      .populate("basket_id");
+      .populate("basket_id")
+      .populate("wishlists");
+
+    console.log(userCheck);
 
     if (!userCheck)
       throw new HttpException(
@@ -71,8 +77,13 @@ export class AuthService {
     dto.password = await this.hashService.encryptPassword(dto.password);
     const createdUser = await this.userModel.create(dto);
     const basket = await this.basketService.createBasket(createdUser.id);
+    const wishlist = await this.wishlistService.createWishlist(
+      DefaultWishlist,
+      createdUser.id,
+    );
 
     createdUser.basket_id = basket;
+    createdUser.wishlists.push(wishlist);
     await createdUser.save();
 
     return createdUser.getWithoutPassword();

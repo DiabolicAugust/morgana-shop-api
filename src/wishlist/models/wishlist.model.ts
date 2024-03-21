@@ -20,3 +20,8 @@ export class Wishlist {
 }
 
 export const WishlistSchema = SchemaFactory.createForClass(Wishlist);
+
+export const WishlistPopulateConfig = {
+  path: "products",
+  model: Models.Product,
+};

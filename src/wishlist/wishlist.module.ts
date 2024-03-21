@@ -4,6 +4,7 @@ import { WishlistService } from "./wishlist.service";
 import { MongooseModule } from "@nestjs/mongoose";
 import { Wishlist, WishlistSchema } from "./models/wishlist.model";
 import { JwtService } from "../services/jwt-service";
+import { Product, ProductSchema } from "src/product/models/product.model";
 
 @Module({
   controllers: [WishlistController],
@@ -13,6 +14,12 @@ import { JwtService } from "../services/jwt-service";
       {
         name: Wishlist.name,
         schema: WishlistSchema,
+      },
+    ]),
+    MongooseModule.forFeature([
+      {
+        name: Product.name,
+        schema: ProductSchema,
       },
     ]),
   ],

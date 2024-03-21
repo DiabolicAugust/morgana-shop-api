@@ -15,6 +15,7 @@ export enum Models {
   User = "User",
   ProductBasket = "Product Basket",
   Product = "Product",
+  Wishlist = "Wishlist",
 }
 
 export const Strings = {
@@ -31,4 +32,6 @@ export const Strings = {
   somthingWentWrong: "Something went wrong",
   basketDoesntContainProduct: (id: string) =>
     `This Product Basket does not contain the product with provided ${id}`,
+  yourModelContainsObject: (firstModel: Models, secondModel: Models) =>
+    `${firstModel} already contains this ${secondModel}!`,
 };

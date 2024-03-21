@@ -22,8 +22,6 @@ export class User {
   role: string;
   @Prop({ type: Types.ObjectId, ref: ProductBasket.name })
   basket_id: ProductBasket;
-  @Prop({ type: [MSchema.Types.ObjectId], ref: Wishlist.name })
-  wishlists: Wishlist[];
 
   createdAt: string;
   updatedAt: string;
@@ -41,7 +39,7 @@ UserSchema.pre(
     try {
       const user = this as UserDocument;
 
-      await this.model("Wishlist").deleteMany({ _id: { $in: user.wishlists } });
+      await this.model("Wishlist").deleteMany({ user_id: user.id });
 
       await this.model("ProductBasket").findOneAndDelete({
         _id: user.basket_id,

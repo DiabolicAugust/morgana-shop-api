@@ -1,15 +1,6 @@
-import {
-  Body,
-  Controller,
-  Param,
-  Patch,
-  Post,
-  Request,
-  UseGuards,
-} from "@nestjs/common";
+import { Body, Controller, Param, Patch } from "@nestjs/common";
 import { WishlistService } from "./wishlist.service";
 import { CreateWishlistDto } from "./dto/create-wishlist.dto";
-import { AuthGuard } from "src/guards/auth-guard";
 
 @Controller("wishlist")
 export class WishlistController {

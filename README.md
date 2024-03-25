@@ -22,11 +22,11 @@ Plan:
  
 - Wishlists:
     - Auto create on user creation +
-    - Add
+    - Add +
     - Add product +
-    - Get
+    - Get +
     - Get by user +
-    - Delete product -
+    - Delete product +
     - Update +
  
 - Categories -

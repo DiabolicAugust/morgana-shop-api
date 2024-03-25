@@ -5,10 +5,11 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { Wishlist, WishlistSchema } from "./models/wishlist.model";
 import { JwtService } from "../services/jwt-service";
 import { Product, ProductSchema } from "src/product/models/product.model";
+import { PayloadAuthService } from "src/services/payload-auth-service";
 
 @Module({
   controllers: [WishlistController],
-  providers: [WishlistService, JwtService],
+  providers: [WishlistService, JwtService, PayloadAuthService],
   imports: [
     MongooseModule.forFeature([
       {

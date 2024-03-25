@@ -6,6 +6,7 @@ import {
   Patch,
   Post,
   Request,
+  UseFilters,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -13,6 +14,8 @@ import {
 import { WishlistService } from "./wishlist.service";
 import { CreateWishlistDto } from "./dto/create-wishlist.dto";
 import { AuthGuard } from "src/guards/auth-guard";
+import { UserPayload } from "src/user/dto/user-payload";
+import { ErrorsCatchingFilter } from "src/services/filters/error-catching.filter";
 
 @Controller("wishlist")
 export class WishlistController {
@@ -27,18 +30,28 @@ export class WishlistController {
   }
 
   @Patch(":id/update")
-  //   @UseGuards(AuthGuard)
-  async create(@Body() dto: CreateWishlistDto, @Param("id") id: string) {
-    return this.wishlistService.updateWishlist(dto, id);
+  @UsePipes(ValidationPipe)
+  @UseGuards(AuthGuard)
+  @UseFilters(new ErrorsCatchingFilter())
+  async create(
+    @Body() dto: CreateWishlistDto,
+    @Param("id") id: string,
+    @Request() req,
+  ) {
+    const payload: UserPayload = req.payload;
+    return this.wishlistService.updateWishlist(dto, id, payload);
   }
 
   @Patch(":wishlistId/add/:productId")
-  //   @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
+  @UseFilters(new ErrorsCatchingFilter())
   async addProduct(
     @Param("wishlistId") wishlistId: string,
     @Param("productId") productId: string,
+    @Request() req,
   ) {
-    return this.wishlistService.addProduct(productId, wishlistId);
+    const payload: UserPayload = req.payload;
+    return this.wishlistService.addProduct(productId, wishlistId, payload);
   }
 
   @Get(":id")

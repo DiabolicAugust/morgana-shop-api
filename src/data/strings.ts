@@ -34,4 +34,6 @@ export const Strings = {
     `This Product Basket does not contain the product with provided ${id}`,
   yourModelContainsObject: (firstModel: Models, secondModel: Models) =>
     `${firstModel} already contains this ${secondModel}!`,
+  yourModelDoesntContainObject: (firstModel: Models, secondModel: Models) =>
+    `${firstModel} doesn't contain this ${secondModel}!`,
 };

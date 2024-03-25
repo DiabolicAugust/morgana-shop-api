@@ -68,6 +68,31 @@ export class WishlistService {
     return wishlist.populate("products");
   }
 
+  async deleteProduct(productId: string, wishlistId: string) {
+    const product = await this.productModel.findById(productId);
+    if (!product)
+      throw new HttpException(
+        Strings.objectNotFoundById(Models.Product, productId),
+        HttpStatus.BAD_REQUEST,
+      );
+    const wishlist = await this.getWishlist(wishlistId);
+
+    const productIndex = wishlist.products.findIndex(
+      (val) => val.id.toString() === productId.toString(),
+    );
+    if (productIndex < -1) {
+      throw new HttpException(
+        Strings.yourModelDoesntContainObject(Models.Wishlist, Models.Product),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    wishlist.products.splice(productIndex, 1);
+
+    await wishlist.save();
+    return wishlist.populate("products");
+  }
+
   async getWishlist(id: string) {
     const wishlist = await this.wishlistModel.findById(id);
     if (!wishlist)

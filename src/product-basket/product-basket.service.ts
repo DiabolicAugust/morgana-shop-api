@@ -8,6 +8,8 @@ import {
 import { Document, Model } from "mongoose";
 import { ProductService } from "../product/product.service.js";
 import { Models, Strings } from "../data/strings.js";
+import { UserPayload } from "../user/dto/user-payload.js";
+import { PayloadAuthService } from "../services/payload-auth-service.js";
 
 @Injectable()
 export class ProductBasketService {
@@ -15,9 +17,10 @@ export class ProductBasketService {
     @InjectModel(ProductBasket.name)
     private readonly basketModel: Model<ProductBasketDocument>,
     private readonly productService: ProductService,
+    private readonly payloadService: PayloadAuthService,
   ) {}
 
-  async addProduct(basketId: string, productId: string) {
+  async addProduct(basketId: string, productId: string, payload: UserPayload) {
     const basket = await this.basketModel
       .findById(basketId)
       .populate(ProductBasketPopulateOptionsProducts);
@@ -28,6 +31,11 @@ export class ProductBasketService {
         HttpStatus.BAD_REQUEST,
       );
     }
+
+    this.payloadService.authenticateUserPermission(
+      payload,
+      basket.user_id.toString(),
+    );
 
     const productIndex = basket.products.findIndex(
       (p) => p.productId.id.toString() === productId.toString(),
@@ -52,13 +60,21 @@ export class ProductBasketService {
     return basket;
   }
 
-  async increaseProductCount(basketId: string, productId: string) {
+  async increaseProductCount(
+    basketId: string,
+    productId: string,
+    payload: UserPayload,
+  ) {
     const basket = await this.basketModel.findById(basketId);
     if (!basket)
       throw new HttpException(
         Strings.objectNotFoundById(Models.ProductBasket, basketId),
         HttpStatus.BAD_REQUEST,
       );
+    this.payloadService.authenticateUserPermission(
+      payload,
+      basket.user_id.toString(),
+    );
 
     const productIndex = basket.products.findIndex(
       (p) => p.productId.id.toString() === productId.toString(),
@@ -67,7 +83,7 @@ export class ProductBasketService {
     if (productIndex > -1) {
       basket.products[productIndex].count += 1;
     } else {
-      return this.addProduct(basketId, productId);
+      return this.addProduct(basketId, productId, payload);
     }
 
     basket.markModified("products");
@@ -75,10 +91,16 @@ export class ProductBasketService {
     return basket;
   }
 
-  async deleteProduct(basketId: string, prodId: string) {
+  async deleteProduct(basketId: string, prodId: string, payload: UserPayload) {
     const basket = await this.basketModel
       .findById(basketId)
       .populate(ProductBasketPopulateOptionsProducts);
+
+    this.payloadService.authenticateUserPermission(
+      payload,
+      basket.user_id.toString(),
+    );
+
     const productIndex = basket.products.findIndex(
       (p) => p.productId.id.toString() === prodId.toString(),
     );
@@ -95,7 +117,11 @@ export class ProductBasketService {
     }
   }
 
-  async decreaseProductCount(basketId: string, productId: string) {
+  async decreaseProductCount(
+    basketId: string,
+    productId: string,
+    payload: UserPayload,
+  ) {
     const basket = await this.basketModel
       .findById(basketId)
       .populate(ProductBasketPopulateOptionsProducts);
@@ -106,13 +132,18 @@ export class ProductBasketService {
         HttpStatus.BAD_REQUEST,
       );
 
+    this.payloadService.authenticateUserPermission(
+      payload,
+      basket.user_id.toString(),
+    );
+
     const productIndex = basket.products.findIndex(
       (p) => p.productId.id.toString() === productId.toString(),
     );
 
     if (productIndex > -1) {
       if (basket.products[productIndex].count == 1) {
-        return this.deleteProduct(basketId, productId);
+        return this.deleteProduct(basketId, productId, payload);
       } else {
         basket.products[productIndex].count -= 1;
       }
@@ -144,7 +175,7 @@ export class ProductBasketService {
     });
     if (!basket) {
       throw new HttpException(
-        Strings.somthingWentWrong,
+        Strings.somethingWentWrong,
         HttpStatus.BAD_GATEWAY,
       );
     }

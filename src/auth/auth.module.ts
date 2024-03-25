@@ -13,15 +13,20 @@ import {
 } from "src/product-basket/models/product-basket.model";
 import { ProductService } from "src/product/product.service";
 import { Product, ProductSchema } from "src/product/models/product.model";
+import { WishlistService } from "src/wishlist/wishlist.service";
+import { Wishlist, WishlistSchema } from "src/wishlist/models/wishlist.model";
+import { PayloadAuthService } from "src/services/payload-auth-service";
 
 @Module({
   controllers: [AuthController],
   providers: [
     AuthService,
     JwtService,
+    PayloadAuthService,
     HashService,
     ProductBasketService,
     ProductService,
+    WishlistService,
   ],
   imports: [
     MongooseModule.forFeature([
@@ -40,6 +45,12 @@ import { Product, ProductSchema } from "src/product/models/product.model";
       {
         name: Product.name,
         schema: ProductSchema,
+      },
+    ]),
+    MongooseModule.forFeature([
+      {
+        name: Wishlist.name,
+        schema: WishlistSchema,
       },
     ]),
   ],

@@ -10,7 +10,7 @@ export class JwtService {
     return this.jwtService.sign(payload);
   }
 
-  getPayloadFromToken(token: string): any {
+  getPayloadFromToken(token: string): UserPayload {
     return this.jwtService.verify(token, { secret: process.env.SECRET });
   }
 }

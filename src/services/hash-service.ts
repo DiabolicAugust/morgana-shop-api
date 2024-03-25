@@ -1,5 +1,5 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class HashService {
@@ -12,7 +12,7 @@ export class HashService {
   async decryptPassword(userPassword: string, clientPassword: string) {
     const isPasswordValid = bcrypt.compare(clientPassword, userPassword);
     if (!isPasswordValid)
-      throw new HttpException('Wrong password', HttpStatus.BAD_REQUEST);
+      throw new HttpException("Wrong password", HttpStatus.BAD_REQUEST);
     return isPasswordValid;
   }
 }

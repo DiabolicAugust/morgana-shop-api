@@ -1,8 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
+  Patch,
   Post,
   UseFilters,
   UsePipes,
@@ -33,5 +35,17 @@ export class ProductController {
   @UseFilters(new ErrorsCatchingFilter())
   async getProduct(@Param("id") id: string) {
     return this.productService.getProduct(id);
+  }
+
+  @Delete("/delete/:id")
+  @UseFilters(new ErrorsCatchingFilter())
+  async delete(@Param("id") id: string) {
+    return this.productService.deleteProduct(id);
+  }
+
+  @Patch("/update/:id")
+  @UseFilters(new ErrorsCatchingFilter())
+  async update(@Body() dto: CreateProductDto, @Param("id") id: string) {
+    return this.productService.update(id, dto);
   }
 }

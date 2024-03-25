@@ -68,6 +68,13 @@ export class WishlistService {
 
     const wishlist = await this.getWishlist(wishlistId);
 
+    if (!wishlist) {
+      throw new HttpException(
+        Strings.objectNotFoundById(Models.Wishlist, wishlistId),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     this.payloadService.authenticateUserPermission(
       payload,
       wishlist.user_id.toString(),
@@ -90,18 +97,37 @@ export class WishlistService {
     return wishlist.populate("products");
   }
 
-  async deleteProduct(productId: string, wishlistId: string) {
+  async deleteProduct(
+    productId: string,
+    wishlistId: string,
+    payload: UserPayload,
+  ) {
     const product = await this.productModel.findById(productId);
+
     if (!product)
       throw new HttpException(
         Strings.objectNotFoundById(Models.Product, productId),
         HttpStatus.BAD_REQUEST,
       );
+
     const wishlist = await this.getWishlist(wishlistId);
+
+    if (!wishlist) {
+      throw new HttpException(
+        Strings.objectNotFoundById(Models.Wishlist, wishlistId),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    this.payloadService.authenticateUserPermission(
+      payload,
+      wishlist.user_id.toString(),
+    );
 
     const productIndex = wishlist.products.findIndex(
       (val) => val.id.toString() === productId.toString(),
     );
+
     if (productIndex < -1) {
       throw new HttpException(
         Strings.yourModelDoesntContainObject(Models.Wishlist, Models.Product),
@@ -113,6 +139,25 @@ export class WishlistService {
 
     await wishlist.save();
     return wishlist.populate("products");
+  }
+
+  async deleteWishlist(id: string, payload: UserPayload) {
+    const wishlist = await this.getWishlist(id);
+
+    if (!wishlist) {
+      throw new HttpException(
+        Strings.objectNotFoundById(Models.Wishlist, id),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    this.payloadService.authenticateUserPermission(
+      payload,
+      wishlist.user_id.toString(),
+    );
+
+    await wishlist.deleteOne();
+    return wishlist;
   }
 
   async getWishlist(id: string) {

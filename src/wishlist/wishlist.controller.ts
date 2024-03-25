@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -52,6 +53,29 @@ export class WishlistController {
   ) {
     const payload: UserPayload = req.payload;
     return this.wishlistService.addProduct(productId, wishlistId, payload);
+  }
+
+  @Delete(":wishlistId/delete/:productId")
+  @UseGuards(AuthGuard)
+  @UseFilters(new ErrorsCatchingFilter())
+  async deleteProduct(
+    @Param("wishlistId") wishlistId: string,
+    @Param("productId") productId: string,
+    @Request() req,
+  ) {
+    const payload: UserPayload = req.payload;
+    return this.wishlistService.deleteProduct(productId, wishlistId, payload);
+  }
+
+  @Delete(":wishlistId/delete")
+  @UseGuards(AuthGuard)
+  @UseFilters(new ErrorsCatchingFilter())
+  async deleteWishlist(
+    @Param("wishlistId") wishlistId: string,
+    @Request() req,
+  ) {
+    const payload: UserPayload = req.payload;
+    return this.wishlistService.deleteWishlist(wishlistId, payload);
   }
 
   @Get(":id")

@@ -2,12 +2,13 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document, HydratedDocument, Schema as MSchema, Types } from "mongoose";
 import { User } from "../../user/models/user.model.js";
 import { Product } from "../../product/models/product.model.js";
+import { Models } from "../../data/strings.js";
 
 export type ProductBasketDocument = HydratedDocument<ProductBasket>;
 
 @Schema({ timestamps: true })
 export class ProductBasket {
-  @Prop({ type: MSchema.Types.ObjectId, ref: "User" })
+  @Prop({ type: MSchema.Types.ObjectId, ref: Models.User })
   user_id: User;
 
   @Prop([

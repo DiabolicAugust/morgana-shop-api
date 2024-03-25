@@ -4,12 +4,14 @@ import {
   Get,
   Param,
   Patch,
+  Request,
   UseFilters,
   UseGuards,
 } from "@nestjs/common";
 import { ProductBasketService } from "./product-basket.service";
 import { ErrorsCatchingFilter } from "../services/filters/error-catching.filter";
 import { AuthGuard } from "../guards/auth-guard";
+import { UserPayload } from "src/user/dto/user-payload";
 
 @Controller("product-basket")
 export class ProductBasketController {
@@ -21,8 +23,11 @@ export class ProductBasketController {
   async addProduct(
     @Param("basketId") basketId: string,
     @Param("productId") productId: string,
+
+    @Request() req,
   ) {
-    return this.basketService.addProduct(basketId, productId);
+    const payload: UserPayload = req.payload;
+    return this.basketService.addProduct(basketId, productId, payload);
   }
 
   @Patch(":basketId/increaseProductCount/:productId")
@@ -31,8 +36,14 @@ export class ProductBasketController {
   async increaseProductCount(
     @Param("basketId") basketId: string,
     @Param("productId") productId: string,
+    @Request() req,
   ) {
-    return this.basketService.increaseProductCount(basketId, productId);
+    const payload: UserPayload = req.payload;
+    return this.basketService.increaseProductCount(
+      basketId,
+      productId,
+      payload,
+    );
   }
 
   @Patch(":basketId/decreaseProductCount/:productId")
@@ -41,8 +52,15 @@ export class ProductBasketController {
   async decreaseProductCount(
     @Param("basketId") basketId: string,
     @Param("productId") productId: string,
+
+    @Request() req,
   ) {
-    return this.basketService.decreaseProductCount(basketId, productId);
+    const payload: UserPayload = req.payload;
+    return this.basketService.decreaseProductCount(
+      basketId,
+      productId,
+      payload,
+    );
   }
 
   @Delete(":basketId/deleteProduct/:productId")
@@ -51,8 +69,11 @@ export class ProductBasketController {
   async deleteProduct(
     @Param("basketId") basketId: string,
     @Param("productId") productId: string,
+
+    @Request() req,
   ) {
-    return this.basketService.deleteProduct(basketId, productId);
+    const payload: UserPayload = req.payload;
+    return this.basketService.deleteProduct(basketId, productId, payload);
   }
 
   @Get(":basketId")

@@ -15,12 +15,14 @@ import { ProductService } from "src/product/product.service";
 import { Product, ProductSchema } from "src/product/models/product.model";
 import { WishlistService } from "src/wishlist/wishlist.service";
 import { Wishlist, WishlistSchema } from "src/wishlist/models/wishlist.model";
+import { PayloadAuthService } from "src/services/payload-auth-service";
 
 @Module({
   controllers: [AuthController],
   providers: [
     AuthService,
     JwtService,
+    PayloadAuthService,
     HashService,
     ProductBasketService,
     ProductService,

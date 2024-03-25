@@ -9,10 +9,16 @@ import {
 import { ProductService } from "../product/product.service.js";
 import { Product, ProductSchema } from "../product/models/product.model.js";
 import { JwtService } from "../services/jwt-service";
+import { PayloadAuthService } from "../services/payload-auth-service";
 
 @Module({
   controllers: [ProductBasketController],
-  providers: [ProductBasketService, ProductService, JwtService],
+  providers: [
+    ProductBasketService,
+    ProductService,
+    JwtService,
+    PayloadAuthService,
+  ],
   imports: [
     MongooseModule.forFeature([
       {

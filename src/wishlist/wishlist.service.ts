@@ -9,6 +9,8 @@ import { Model } from "mongoose";
 import { CreateWishlistDto } from "./dto/create-wishlist.dto";
 import { Models, Strings } from "src/data/strings";
 import { Product, ProductDocument } from "src/product/models/product.model";
+import { UserPayload } from "src/user/dto/user-payload";
+import { PayloadAuthService } from "src/services/payload-auth-service";
 
 @Injectable()
 export class WishlistService {
@@ -17,6 +19,7 @@ export class WishlistService {
     private readonly wishlistModel: Model<WishlistDocument>,
     @InjectModel(Product.name)
     private readonly productModel: Model<ProductDocument>,
+    private readonly payloadService: PayloadAuthService,
   ) {}
   async createWishlist(dto: CreateWishlistDto, user_id: string) {
     const wishlist = await this.wishlistModel.create({
@@ -27,10 +30,20 @@ export class WishlistService {
     return wishlist;
   }
 
-  async updateWishlist(dto: CreateWishlistDto, id: string) {
-    const wishlist = await this.wishlistModel.findByIdAndUpdate(id, dto, {
-      new: true,
-    });
+  async updateWishlist(
+    dto: CreateWishlistDto,
+    id: string,
+    payload: UserPayload,
+  ) {
+    const wishlist = await this.wishlistModel.findById(id);
+
+    this.payloadService.authenticateUserPermission(
+      payload,
+      wishlist.user_id.toString(),
+    );
+
+    await wishlist.updateOne(dto, { new: true });
+
     if (!wishlist) {
       throw new HttpException(
         Strings.objectNotFoundById(Models.Wishlist, id),
@@ -41,7 +54,11 @@ export class WishlistService {
     return wishlist;
   }
 
-  async addProduct(productId: string, wishlistId: string) {
+  async addProduct(
+    productId: string,
+    wishlistId: string,
+    payload: UserPayload,
+  ) {
     const product = await this.productModel.findById(productId);
     if (!product)
       throw new HttpException(
@@ -50,6 +67,11 @@ export class WishlistService {
       );
 
     const wishlist = await this.getWishlist(wishlistId);
+
+    this.payloadService.authenticateUserPermission(
+      payload,
+      wishlist.user_id.toString(),
+    );
 
     const productIds = wishlist.products.map((product) => product.toString());
     if (

@@ -3,8 +3,8 @@ Might be live on: https://morgana-shop-api.onrender.com
 Plan:
 - Products:
     - Add +
-    - Delete -
-    - Update -
+    - Delete +
+    - Update +
     - Get +
     - Get All +
 
@@ -27,6 +27,7 @@ Plan:
     - Get +
     - Get by user +
     - Delete product +
+    - Delete wishlist +
     - Update +
  
 - Categories -

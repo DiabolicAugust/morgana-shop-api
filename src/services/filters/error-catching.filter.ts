@@ -6,7 +6,7 @@ import {
   HttpStatus,
 } from "@nestjs/common";
 import { Request, Response } from "express";
-import { Models, Strings } from "../../data/strings";
+import { Fields, Models, Strings } from "../../data/strings";
 
 @Injectable()
 export class ErrorsCatchingFilter implements ExceptionFilter {
@@ -17,9 +17,12 @@ export class ErrorsCatchingFilter implements ExceptionFilter {
     let status: number;
     let errorResponse: any;
     let message: any;
-    let model: any;
 
-    console.log(exception.model);
+    if (exception.getResponse && typeof exception.getResponse === "function") {
+      console.log(exception.getResponse());
+    } else {
+      console.log(exception);
+    }
 
     if (
       // exception.includes("Cast to ObjectId failed for value ") ||
@@ -38,8 +41,26 @@ export class ErrorsCatchingFilter implements ExceptionFilter {
       const model = Models[modelText];
 
       message = Strings.objectNotFoundById(model, id);
+    } else if (exception.message.includes("duplicate key error")) {
+      const model =
+        Models[
+          Strings.capitalizeFirstLetterAndRemoveSymbols(
+            request.path.split("/")[1],
+          )
+        ];
+      const field =
+        Fields[
+          Strings.capitalizeFirstLetterAndRemoveSymbols(
+            Object.keys(exception.keyValue)[0],
+          )
+        ];
+
+      message = Strings.objectWithFieldAlreadyExists(model, field);
     } else {
-      message = exception.message || exception;
+      message =
+        exception.getResponse && typeof exception.getResponse === "function"
+          ? exception.getResponse()
+          : exception.message;
     }
 
     if (exception instanceof HttpException) {
@@ -55,7 +76,6 @@ export class ErrorsCatchingFilter implements ExceptionFilter {
       message: message,
     };
 
-    console.log(errorResponse);
     response.status(status).json(errorResponse);
   }
 }

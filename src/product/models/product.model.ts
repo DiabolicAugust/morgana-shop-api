@@ -1,5 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Schema as MSchema } from "mongoose";
 import { HydratedDocument } from "mongoose";
+import { Category } from "src/category/models/category.model";
 
 export type ProductDocument = HydratedDocument<Product>;
 
@@ -7,6 +9,9 @@ export type ProductDocument = HydratedDocument<Product>;
 export class Product {
   @Prop()
   title: string;
+
+  @Prop({ type: MSchema.Types.ObjectId, ref: Category.name })
+  category: Category;
 
   @Prop()
   description: string;

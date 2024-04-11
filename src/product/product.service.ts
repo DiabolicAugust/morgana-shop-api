@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Product, ProductDocument } from "./models/product.model";
 import { Document, Model } from "mongoose";
-import { CreateProductDto } from "./create-product.dto.js";
+import { CreateProductDto } from "./dto/create-product.dto.js";
 import { Models, Strings } from "src/data/strings";
 
 @Injectable()
@@ -23,7 +23,7 @@ export class ProductService {
         Strings.objectNotFoundById(Models.Product, id),
         HttpStatus.BAD_REQUEST,
       );
-    return product;
+    return product.populate("category");
   }
 
   async getProducts() {

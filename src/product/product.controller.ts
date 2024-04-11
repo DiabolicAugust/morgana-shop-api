@@ -11,7 +11,7 @@ import {
   ValidationPipe,
 } from "@nestjs/common";
 import { ProductService } from "./product.service.js";
-import { CreateProductDto } from "./create-product.dto.js";
+import { CreateProductDto } from "./dto/create-product.dto.js";
 import { ErrorsCatchingFilter } from "../services/filters/error-catching.filter.js";
 
 @Controller("product")

@@ -9,6 +9,7 @@ import { AuthModule } from "./auth/auth.module";
 import { JwtModule } from "@nestjs/jwt";
 import { ProductBasketModule } from "./product-basket/product-basket.module";
 import { WishlistModule } from "./wishlist/wishlist.module";
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -33,6 +34,8 @@ import { WishlistModule } from "./wishlist/wishlist.module";
     ProductBasketModule,
 
     WishlistModule,
+
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
